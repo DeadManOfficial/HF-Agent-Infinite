@@ -1,0 +1,79 @@
+name: Daily HF Crawl
+
+on:
+  schedule:
+    # Run daily at midnight UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install huggingface_hub requests
+      
+      - name: Run crawl
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python -c "
+          from huggingface_hub import HfApi, list_models, list_datasets, list_spaces
+          import json
+          from datetime import datetime
+          
+          print('🔥 PROMETHEUS Daily Crawl')
+          print('=' * 60)
+          
+          # Crawl models
+          print('Crawling models...')
+          models = list(list_models(limit=1000, sort='downloads', direction=-1))
+          print(f'  Found {len(models)} models')
+          
+          # Crawl datasets
+          print('Crawling datasets...')
+          datasets = list(list_datasets(limit=1000, sort='downloads', direction=-1))
+          print(f'  Found {len(datasets)} datasets')
+          
+          # Crawl spaces
+          print('Crawling spaces...')
+          spaces = list(list_spaces(limit=1000, sort='likes', direction=-1))
+          print(f'  Found {len(spaces)} spaces')
+          
+          # Save summary
+          summary = {
+              'timestamp': datetime.now().isoformat(),
+              'models_count': len(models),
+              'datasets_count': len(datasets),
+              'spaces_count': len(spaces),
+              'top_models': [m.id for m in models[:10]],
+              'top_datasets': [d.id for d in datasets[:10]],
+              'top_spaces': [s.id for s in spaces[:10]]
+          }
+          
+          with open('data/crawl_summary.json', 'w') as f:
+              json.dump(summary, f, indent=2)
+          
+          print('\\n✅ Crawl complete!')
+          print(json.dumps(summary, indent=2))
+          "
+      
+      - name: Commit results
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/crawl_summary.json || true
+          git diff --staged --quiet || git commit -m "Auto-update: Daily crawl $(date +%Y-%m-%d)"
+          git push || true

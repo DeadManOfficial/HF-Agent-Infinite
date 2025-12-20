@@ -1,0 +1,75 @@
+{
+  "agent_name": "PROMETHEUS",
+  "version": "1.0.0",
+  "author": "Phantom Engineer",
+  
+  "crawl_interval_hours": 1,
+  "max_items_per_crawl": 10000,
+  
+  "embedding_model": "all-MiniLM-L6-v2",
+  "llm_model": "Qwen/Qwen1.5-0.5B-Chat",
+  
+  "enable_auto_fine_tune": false,
+  "enable_monitoring": true,
+  "enable_alerts": false,
+  
+  "alert_channels": ["telegram", "email"],
+  
+  "priority_authors": [
+    "DavidAU",
+    "Nymbo",
+    "TheBloke",
+    "unsloth",
+    "mistralai",
+    "meta-llama",
+    "Qwen",
+    "google",
+    "microsoft",
+    "nvidia"
+  ],
+  
+  "priority_tags": [
+    "llm",
+    "gguf",
+    "quantized",
+    "instruct",
+    "chat",
+    "code",
+    "vision",
+    "multimodal",
+    "text-generation",
+    "text-to-image"
+  ],
+  
+  "priority_models": [
+    "DavidAU/Qwen3-48B-A4B-Savant-Commander-GATED-12x-Closed-Open-Source-Distill-GGUF"
+  ],
+  
+  "api": {
+    "host": "0.0.0.0",
+    "port": 8000,
+    "cors_origins": ["*"]
+  },
+  
+  "database": {
+    "path": "data/hf_infinite.db",
+    "backup_interval_hours": 24
+  },
+  
+  "logging": {
+    "level": "INFO",
+    "file": "data/logs/prometheus.log",
+    "max_size_mb": 100,
+    "backup_count": 5
+  },
+  
+  "watchdog": {
+    "check_interval_seconds": 60,
+    "max_restart_attempts": 3
+  },
+  
+  "rate_limits": {
+    "hf_api_calls_per_second": 1.0,
+    "search_requests_per_minute": 60
+  }
+}

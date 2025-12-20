@@ -1,0 +1,40 @@
+# HF-Agent-Infinite Dependencies
+# ================================
+
+# Core
+huggingface_hub>=0.20.0
+requests>=2.31.0
+
+# API Server
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.5.0
+
+# Database
+# SQLite is built-in
+
+# Vector Search (CPU-only, free)
+faiss-cpu>=1.7.4
+sentence-transformers>=2.2.0
+
+# Data Processing
+numpy>=1.24.0
+pandas>=2.0.0
+
+# Utilities
+python-dotenv>=1.0.0
+loguru>=0.7.0
+
+# Optional: LLM Backend (for advanced features)
+# transformers>=4.36.0
+# torch>=2.1.0
+# accelerate>=0.25.0
+
+# Optional: Task Queue (for distributed processing)
+# celery>=5.3.0
+# redis>=5.0.0
+
+# Development
+# pytest>=7.4.0
+# black>=23.0.0
+# ruff>=0.1.0
